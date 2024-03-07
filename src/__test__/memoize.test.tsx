@@ -1,6 +1,16 @@
-import { memoizedFactorial } from "../components/memoize";
+import { useMemoize } from "../hooks/useMemoize";
+
+const factorialFn = (n: number): number => {
+  if (n === 0) {
+    return 1;
+  } else {
+    return n * factorialFn(n - 1);
+  }
+};
+
 
 describe("memoizedFactorial", () => {
+  const memoizedFactorial = useMemoize(factorialFn);
   it("returns the correct factorial for a number", () => {
     expect(memoizedFactorial(0)).toBe(1);
     expect(memoizedFactorial(1)).toBe(1);

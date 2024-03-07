@@ -1,15 +1,22 @@
-import { act } from "@testing-library/react";
-import useThrottle from "../hooks/useThrottle";
+import useThrottle from '../hooks/useThrottle';
 
-test("should throttle the callback based on the provided limit", () => {
-  const callback = jest.fn();
-  const throttledCallback = useThrottle(callback, 1000);
+describe('useThrottle', () => {
+  it('should execute the function immediately and then not until after the specified delay', () => {
+    const func = jest.fn();
+    const throttledFunc = useThrottle(func, 500);
 
-  act(() => {
-    throttledCallback();
+    jest.useFakeTimers();
+
+    throttledFunc();
+    expect(func).toHaveBeenCalled();
+
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(500);
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(2);
+
+    jest.useRealTimers();
   });
-
-  setTimeout(() => {
-    expect(callback).toHaveBeenCalled();
-  }, 1100);
 });
