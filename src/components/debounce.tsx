@@ -1,9 +1,21 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useState, useEffect } from "react";
 import useDebounce from "../hooks/useDebounce";
 
 function Debounce() {
   const [message, setMessage] = useState("");
-  const debouncedMessage = useDebounce(message);
+  const [debouncedMessageValue, setDebouncedMessageValue] = useState("");
+  const messageFunction = () => message;
+  const debouncedMessage = useDebounce(messageFunction, 500);
+
+  useEffect(() => {
+    debouncedMessage(message);
+    const id = setTimeout(() => {
+      setDebouncedMessageValue(message);
+    }, 500);
+    return () => {
+      clearTimeout(id);
+    };
+  }, [message, debouncedMessage]);
 
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
     setMessage(e.target.value);
@@ -20,7 +32,7 @@ function Debounce() {
           value={message}
         ></input>
         <h2>Default: {message}</h2>
-        <h2>Debounce: {debouncedMessage}</h2>
+        <h2>Debounce: {debouncedMessageValue}</h2>
         <h3>
           Debounce is a valuable technique for optimizing event handling. By
           delaying the execution of a function until after a specified period of

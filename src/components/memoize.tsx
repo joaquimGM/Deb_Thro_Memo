@@ -1,22 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useMemoize } from "../hooks/useMemoize";
 
-const factorial = (n: number): number => {
+const factorialFn = (n: number): number => {
   if (n === 0) {
     return 1;
   } else {
-    return n * factorial(n - 1);
-  }
-};
-
-const memo = new Map();
-
-export const memoizedFactorial = (n: number) => {
-  if (memo.has(n)) {
-    return memo.get(n);
-  } else {
-    const result = factorial(n);
-    memo.set(n, result);
-    return result;
+    return n * factorialFn(n - 1);
   }
 };
 
@@ -24,10 +13,14 @@ const Memoize = () => {
   const [number, setNumber] = useState(0);
   const [factorial, setFactorial] = useState(1);
 
+  const memoizedFactorial = useMemoize(factorialFn);
+
+  useEffect(() => {
+    setFactorial(memoizedFactorial(number));
+  }, [number, memoizedFactorial]);
+
   const handleIncrement = () => {
-    const newNumber = number + 1;
-    setNumber(newNumber);
-    setFactorial(memoizedFactorial(newNumber));
+    setNumber(number + 1);
   };
 
   return (

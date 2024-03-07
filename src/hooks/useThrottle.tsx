@@ -1,13 +1,11 @@
-import { useRef } from 'react';
+let timeoutRef: number | null = null;
 
-function useThrottle(cb: () => void, limit: number) {
-  const timeoutRef = useRef<number | null>(null);
-
+function useThrottle(cb: () => void, limit: number): () => void {
   return function () {
-    if (!timeoutRef.current) {
+    if (!timeoutRef) {
       cb();
-      timeoutRef.current = window.setTimeout(() => {
-        timeoutRef.current = null;
+      timeoutRef = window.setTimeout(() => {
+        timeoutRef = null;
       }, limit);
     }
   };
